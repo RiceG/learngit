@@ -8,3 +8,4 @@ Creating a new branch is quick and simple.
 Creating a new branch is quick and simple.
 >>>>>>> wg
 no fast forword
+stash
