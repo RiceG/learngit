@@ -126,7 +126,7 @@
             
             $(function() {
                 
-                $.get('test.md', function(md){
+                $.get('1.md', function(md){
                     testEditor = editormd("test-editormd", {
                         width: "90%",
                         height: 740,
@@ -158,7 +158,7 @@
                         imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
                         imageUploadURL : "./php/upload.php",
                         onload : function() {
-                            console.log('onload', this);
+                            //console.log('onload', this);
                             //this.fullscreen();
                             //this.unwatch();
                             //this.watch().fullscreen();

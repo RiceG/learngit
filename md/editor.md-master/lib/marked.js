@@ -27,7 +27,7 @@ var block = {
   text: /^[^\n]+/
 };
 
-block.note = /^\/\* *\n(.*:.*; *\n)*? *\*\//;
+block.note = /^\$(\w*) *= *(.*)(?:\n+|$)/;
 
 block.bullet = /(?:[*+-]|\d+\.)/;
 block.item = /^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/;
@@ -150,26 +150,47 @@ Lexer.prototype.lex = function(src) {
  */
 
 Lexer.prototype.token = function(src, top, bq) {
-  var src = src.replace(/^ +$/gm, '')
-    , next
-    , loose
-    , cap
-    , bull
-    , b
-    , item
-    , space
-    , i
-    , l;
+    var src = src.replace(/^ +$/gm, '')
+        , next
+        , loose
+        , cap
+        , bull
+        , b
+        , item
+        , space
+        , i
+        , l;
 
-  //
-  console.log("parse to token.");
-  if(cap = this.rules.note.exec(src)){
-    console.log("in note");
-      src = src.substring(cap[0].length);
-      if (cap[0].length > 1) {
-        console.log(cap[0]);
-      }
-  }
+    console.log(src);
+
+    //note
+    var json = {}
+        ,hasnote = false;
+    while (cap = this.rules.note.exec(src)) {
+        src = src.substring(cap[0].length);
+        if (cap[0].length > 4) {
+            hasnote = true;
+            var key = cap[1].trim();
+            if (key == "title") {
+                json["title"] = cap[2].trim();
+            }
+            else if (key == "tag") {
+                json["tag"] = cap[2].split(',').map(function (v) {
+                    return v.trim();
+                });
+            }
+            else {
+                json[key] = cap[2].trim();
+            }
+        }
+    }
+
+    if (hasnote) {
+      this.tokens.push({
+        type: 'note',
+        note: json
+      });
+    }
 
   while (src) {
     // newline
@@ -447,7 +468,7 @@ Lexer.prototype.token = function(src, top, bq) {
     }
 
     if (src) {
-      throw new
+        throw new
         Error('Infinite loop on byte: ' + src.charCodeAt(0));
     }
   }
@@ -796,6 +817,20 @@ Renderer.prototype.code = function(code, lang, escaped) {
     + '\n</code></pre>\n';
 };
 
+Renderer.prototype.note = function (note) {
+    var n ='';
+    if(note["title"])
+        n += '<h1>'+note["title"]+'</h1>\n';
+    if(note["tag"]) {
+        n += '<div class="tags">\n';
+        note["tag"].map(function (v) {
+            n += '<span class="tag">' + v + '</span>\n';
+        })
+        n += '</div>'
+    }
+    return n;
+}
+
 Renderer.prototype.blockquote = function(quote) {
   return '<blockquote>\n' + quote + '</blockquote>\n';
 };
@@ -986,6 +1021,10 @@ Parser.prototype.parseText = function() {
 
 Parser.prototype.tok = function() {
   switch (this.token.type) {
+      case 'note':{
+          console.log("note");
+         return this.renderer.note(this.token.note);
+      }
     case 'space': {
       return '';
     }
