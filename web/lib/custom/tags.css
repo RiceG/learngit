@@ -1,0 +1,61 @@
+@charset "UTF-8";
+
+.tags-wrap {
+    cursor: text;
+    font-size: 14px;
+    color: #666;
+    width: 100%;
+    height: 100%;
+    outline: 0;
+    padding: 4px 4px;
+    line-height: 1;
+    border: none;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+.tags-wrap::after {
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
+}
+
+.tags, .tags-input {
+    position: relative;
+    float: left;
+    color: #fff;
+    line-height: 28px;
+    margin: 1px 2px;
+    padding: 0 22px 0 10px;
+    border-radius: 6px;
+}
+
+.tags-input {
+    font-size: 14px;
+    padding: 0;
+    border: none !important;
+    color: inherit;
+}
+
+.tags .del, .tags-input .del {
+    width: 22px;
+    height: 28px;
+    text-align: center;
+    cursor: pointer;
+    position: absolute;
+    top: -1px;
+    right: 0;
+}
+
+.tags-enter,
+.tags-leave {
+    -webkit-transform: scale(.9);
+    transform: scale(.9);
+    opacity: 0
+}
+
+.tags-transition {
+    transition: all .3s ease
+}
